@@ -104,6 +104,10 @@ public class Menu extends JFrame{
 		    }
 		}
 			
+		
+		//------OPEN NEW CUSTOMER UI--------
+		
+		
 			private void openNewCustomerUI() {
 				
 				f.dispose();		
@@ -135,65 +139,25 @@ public class Menu extends JFrame{
 					panel.add(dOBTextField);
 						
 					panel2 = new JPanel();
-					add = new JButton("Add");
 					
-					 add.addActionListener(new ActionListener() {
+					JButton add = new JButton("Add");
+					JButton cancel = new JButton("Cancel");
+					
+					//add button action listener
+					add.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
+							createNewCustomer();
+						}
+					});
 					
-							
-				PPS = pPSTextField.getText();
-				firstName = firstNameTextField.getText();
-				surname = surnameTextField.getText();
-				DOB = dOBTextField.getText();
-				password = "";
-			
-				CustomerID = "ID"+PPS ;
-				
-			
-				
-				
-				
-				
-				add.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						f1.dispose();
-						
-						boolean loop = true;
-						while(loop){
-						 password = JOptionPane.showInputDialog(f, "Enter 7 character Password;");
-						
-						 if(password.length() != 7)//Making sure password is 7 characters
-						    {
-						    	JOptionPane.showMessageDialog(null, null, "Password must be 7 charatcers long", JOptionPane.OK_OPTION);
-						    }
-						 else
-						 {
-							 loop = false;
-						 }
-						}
-						
-						
-						
-						
-					    ArrayList<CustomerAccount> accounts = new ArrayList<CustomerAccount> ();
-								Customer customer = new Customer(PPS, surname, firstName, DOB, CustomerID, password, accounts);
-									
-								customerList.add(customer);
-							
-								JOptionPane.showMessageDialog(f, "CustomerID = " + CustomerID +"\n Password = " + password  ,"Customer created.",  JOptionPane.INFORMATION_MESSAGE);
-								menuStart();
-							//f.dispose();
-					}
-				});	
-						}
-					});						
-					JButton cancel = new JButton("Cancel");					
+					//cancel button action listener
 					cancel.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							f1.dispose();
 							menuStart();
 						}
 					});	
+							
 					
 					panel2.add(add);
 					panel2.add(cancel);
@@ -205,8 +169,74 @@ public class Menu extends JFrame{
 				
 			}
 			
+			//method to create new customer
+			private void createNewCustomer() {
+				String PPS = pPSTextField.getText();
+			    String firstName = firstNameTextField.getText();
+			    String surname = surnameTextField.getText();
+			    String DOB = dOBTextField.getText();
+
+			    if (PPS.isEmpty()) {
+			    	JOptionPane.showMessageDialog(null, null, "Please enter PPSN", JOptionPane.OK_OPTION);
+			        return;
+			    }
+			    if (firstName.isEmpty()) {
+			    	JOptionPane.showMessageDialog(null, null, "Please enter first name", JOptionPane.OK_OPTION);
+			        return;
+			    }
+			    if (surname.isEmpty()) {
+			    	JOptionPane.showMessageDialog(null, null, "Please enter surname", JOptionPane.OK_OPTION);
+			        return;
+			    }
+			    if (DOB.isEmpty()) {
+			    	JOptionPane.showMessageDialog(null, null, "Please enter DOB", JOptionPane.OK_OPTION);
+			        return;
+			    }
+
+			    String password = setCustomerPassword();
+			    if (password == null) {
+			        return;
+			    }
+
+			    String customerID = "ID" + PPS;
+
+			    ArrayList<CustomerAccount> accounts = new ArrayList<CustomerAccount>();
+			    Customer customer = new Customer(PPS, surname, firstName, DOB, customerID, password, accounts);
+			    customerList.add(customer);
+
+			    JOptionPane.showMessageDialog(f, "CustomerID = " + customerID +"\n Password = " + password  ,"Customer created.",  JOptionPane.INFORMATION_MESSAGE);
+
+			    f1.dispose();
+			    menuStart();
+			}
 			
 			
+			//method to let customer set password
+			private String setCustomerPassword() {
+				boolean loop = true;
+				while(loop){
+				 String password = JOptionPane.showInputDialog(f, "Enter 7 character Password;");
+				 
+				 if (password == null) {
+					 return null;
+				 }
+				
+				 if(password.length() != 7)//Making sure password is 7 characters
+				    {
+				    	JOptionPane.showMessageDialog(null, null, "Password must be 7 charatcers long", JOptionPane.OK_OPTION);
+				    }
+				 else
+				 {
+					 loop = false;
+					 return password;
+				 }
+				 
+				}
+				return password;
+			}
+			
+			
+			//------OPEN ADMIN UI--------
 			
 			private void openAdministratorUI() {
 				
@@ -269,6 +299,9 @@ public class Menu extends JFrame{
 			    }	
 				
 			}
+			
+			//------OPEN CUSTOOMER UI--------
+			
 			
 			private void openExistingCustomerUI() {
 				
