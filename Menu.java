@@ -294,71 +294,86 @@ public class Menu extends JFrame{
 			    menuStart();
 			}
 				
-			    /*
-				boolean loop = true, loop2 = true;
-				boolean cont = false;
-			    while(loop)
-			    {
-			    Object adminUsername = JOptionPane.showInputDialog(f, "Enter Administrator Username:");
-
-			    if(!adminUsername.equals("admin"))//search admin list for admin with matching admin username
-			    {
-			    	int reply  = JOptionPane.showConfirmDialog(null, null, "Incorrect Username. Try again?", JOptionPane.YES_NO_OPTION);
-			    	if (reply == JOptionPane.YES_OPTION) {
-			    		loop = true;
-			    	}
-			    	else if(reply == JOptionPane.NO_OPTION)
-			    	{
-			    		f1.dispose();
-			    		loop = false;
-			    		loop2 = false;
-			    		menuStart();
-			    	}
-			    }
-			    else
-			    {
-			    	loop = false;
-			    }				    
-			    }
-			    
-			    while(loop2)
-			    {
-			    	Object adminPassword = JOptionPane.showInputDialog(f, "Enter Administrator Password;");
-			    	
-			    	   if(!adminPassword.equals("admin11"))//search admin list for admin with matching admin password
-					    {
-					    	int reply  = JOptionPane.showConfirmDialog(null, null, "Incorrect Password. Try again?", JOptionPane.YES_NO_OPTION);
-					    	if (reply == JOptionPane.YES_OPTION) {
-					    		
-					    	}
-					    	else if(reply == JOptionPane.NO_OPTION){
-					    		f1.dispose();
-					    		loop2 = false;
-					    		menuStart();
-					    	}
-					    }
-			    	   else
-			    	   {
-			    		   loop2 =false;
-			    		   cont = true;
-			    	   }
-			    }
-			    	
-			    if(cont)
-			    {
-			    	if (f1 != null) {
-			    		f1.dispose();
-			    	}
-			    	loop = false;
-			    admin();					    
-			    }	
-				
-			} */
 			
 			//------OPEN CUSTOOMER UI--------
 			
 			
 			private void openExistingCustomerUI() {
+				Customer customer = getExistingCustomer();
+				
+				if (customer == null) {
+					return;
+				}
+				
+				boolean validPassword = checkCustomerPassword(customer);
+			    if (!validPassword)  {
+			    	return;
+			    }
+			    
+			    if (f != null) {
+			        f.dispose();
+			    }
+			    
+			    customer(customer);
+			}
+			
+			private Customer getExistingCustomer() {
+				boolean loop = true;
+			    while (loop) {
+			        String customerId = JOptionPane.showInputDialog(f, "Enter Customer ID:");
+			        if (customerId == null) {
+			        	backToMenuStart(f);
+			            return null;
+			        }
+
+			        Customer customer = findCustomerById(customerId);
+			        if (customer != null) {
+			            return customer;
+			        }
+
+			        int reply = JOptionPane.showConfirmDialog(f,"User not found. Try again?",null,JOptionPane.YES_NO_OPTION);
+
+			        if (reply == JOptionPane.NO_OPTION) {
+			        	backToMenuStart(f);
+			            return null;
+			        }
+			    }
+				return customer;
+			}
+			
+			private Customer findCustomerById(String customerID) {
+			    for (Customer aCustomer: customerList) {
+			        if (aCustomer.getCustomerID().equals(customerID)) {
+			            return aCustomer;
+			        }
+			    }
+			    return null;
+			}
+			
+			private boolean checkCustomerPassword(Customer customer) {
+				boolean loop = true;
+			    while (loop) {
+			        String customerPassword = JOptionPane.showInputDialog(f, "Enter Customer Password:");
+			        if (customerPassword == null) {
+			        	backToMenuStart(f);
+			            return false;
+			        }
+
+			        if (customer.getPassword().equals(customerPassword)) {
+			            return true;
+			        }
+
+			        int reply = JOptionPane.showConfirmDialog(f,"Incorrect password. Try again?",null,JOptionPane.YES_NO_OPTION);
+
+			        if (reply == JOptionPane.NO_OPTION) {
+			        	backToMenuStart(f);
+			            return false;
+			        }
+			    }
+				return false;
+			}
+				
+				/*
 				
 				boolean loop = true, loop2 = true;
 				boolean cont = false;
@@ -430,7 +445,7 @@ public class Menu extends JFrame{
 			    	loop = false;
 			    	customer(customer);				    
 			    }				    
-			}
+			} */
 				
 	
 
