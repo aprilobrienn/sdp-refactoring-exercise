@@ -215,8 +215,7 @@ public class Menu extends JFrame{
 			
 			//method to let customer set password
 			private String setCustomerPassword() {
-				boolean loop = true;
-				while(loop){
+				while(true){
 				 String password = JOptionPane.showInputDialog(f, "Enter 7 character Password;");
 				 
 				 if (password == null) {
@@ -229,12 +228,10 @@ public class Menu extends JFrame{
 				    }
 				 else
 				 {
-					 loop = false;
 					 return password;
 				 }
 				 
 				}
-				return password;
 			}
 			
 			
@@ -260,8 +257,7 @@ public class Menu extends JFrame{
 			}
 			
 			private String checkAdminDetails(JFrame f, String message, String value ,String retryMsg) {
-				boolean loop = true;
-			    while (loop) {
+			    while (true) {
 			    	
 			        String valueEntered = JOptionPane.showInputDialog(f, message);
 
@@ -281,7 +277,6 @@ public class Menu extends JFrame{
 			            return null;
 			        }
 			    }
-				return null;
 			}
 			
 			private void backToMenuStart(JFrame f) {
@@ -318,8 +313,7 @@ public class Menu extends JFrame{
 			}
 			
 			private Customer getExistingCustomer() {
-				boolean loop = true;
-			    while (loop) {
+			    while (true) {
 			        String customerId = JOptionPane.showInputDialog(f, "Enter Customer ID:");
 			        if (customerId == null) {
 			        	backToMenuStart(f);
@@ -338,7 +332,6 @@ public class Menu extends JFrame{
 			            return null;
 			        }
 			    }
-				return customer;
 			}
 			
 			private Customer findCustomerById(String customerID) {
@@ -351,8 +344,7 @@ public class Menu extends JFrame{
 			}
 			
 			private boolean checkCustomerPassword(Customer customer) {
-				boolean loop = true;
-			    while (loop) {
+			    while (true) {
 			        String customerPassword = JOptionPane.showInputDialog(f, "Enter Customer Password:");
 			        if (customerPassword == null) {
 			        	backToMenuStart(f);
@@ -370,7 +362,6 @@ public class Menu extends JFrame{
 			            return false;
 			        }
 			    }
-				return false;
 			}
 				
 				
@@ -422,7 +413,7 @@ public class Menu extends JFrame{
 		
 		interestButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//interestMethod();
+				interestMethod();
 			}
 		}); 
 		
@@ -494,8 +485,7 @@ public class Menu extends JFrame{
 			JOptionPane.showMessageDialog(f, "There are no customers yet!"  ,"Oops!",  JOptionPane.INFORMATION_MESSAGE);
 			return null;
 		}
-		boolean loop = true;
-		while (loop) {
+		while (true) {
 			String customerId = JOptionPane.showInputDialog(f, message);
 	        if (customerId == null) {
 	        	return null;
@@ -512,7 +502,6 @@ public class Menu extends JFrame{
 	        	return null;
 	        }
 		}
-		return customer;
 	}
 	
 	
@@ -573,6 +562,61 @@ public class Menu extends JFrame{
 
 	    JOptionPane.showMessageDialog(f, "New balance = " + acc.getBalance(), "Success!", JOptionPane.INFORMATION_MESSAGE);
 	    admin();
+	}
+	
+	//----interest method---
+	private void interestMethod() {
+	    Customer customer = getACustomer("Customer ID of Customer You Wish to Apply Interest to:");
+	    if (customer == null) {
+	        admin();
+	        return;
+	    }
+
+	    if (customer.getAccounts().isEmpty()) {
+	        JOptionPane.showMessageDialog(f, "This customer has no accounts! \n The admin must add acounts to this customer.", "Oops!", JOptionPane.INFORMATION_MESSAGE);
+	        admin();
+	        return;
+	    }
+
+	    CustomerAccount account = getCustomersAccount(customer, "Select an account to apply interest to:");
+	    if (account == null) {
+	    	admin();
+	        return;
+	    }
+
+	    if (!(account instanceof CustomerDepositAccount)) {
+	        JOptionPane.showMessageDialog(f, "To apply interest you must choose a deposit account.", "Oops!", JOptionPane.INFORMATION_MESSAGE);
+	        admin();
+	        return;
+	    }
+
+	    Double interest = enterInterest("Enter interest percentage you wish to apply: \n NOTE: Please enter a numerical value. (with no percentage sign) \n E.g: If you wish to apply 8% interest, enter '8'");
+	    if (interest == null) {
+	    	admin();
+	        return;
+	    }
+
+	    account.setBalance(account.getBalance() + (account.getBalance() * (interest / 100.0)));
+	    JOptionPane.showMessageDialog(f, interest + "% interest applied. New balance = " + account.getBalance(), "Success!", JOptionPane.INFORMATION_MESSAGE);
+
+	    admin();
+	}
+	
+	private Double enterInterest(String message) {
+	    while (true) {
+	    	String interestString = JOptionPane.showInputDialog(f, message);
+	        if (interestString == null) {
+	        	return null;
+	        }
+	        if (isNumeric(interestString)) {
+	        	Double interest = Double.parseDouble(interestString);
+				return interest;
+				
+	        } else {
+	        	JOptionPane.showMessageDialog(f, "You must enter a numerical value!" ,"Oops!",  JOptionPane.INFORMATION_MESSAGE);
+			}
+	        
+	    }
 	}
 	
 	//---account method----
