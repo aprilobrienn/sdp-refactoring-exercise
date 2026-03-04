@@ -1,15 +1,9 @@
 import java.awt.*;
-
 import java.awt.event.*;
 import java.util.ArrayList;
-
 import javax.swing.*;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
 import javax.swing.text.MaskFormatter;
-import java.util.ArrayList;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -42,10 +36,10 @@ public class Menu extends JFrame{
 	
 	public void menuStart()
 	{
-		   /*The menuStart method asks the user if they are a new customer, an existing customer or an admin. It will then start the create customer process
-		  if they are a new customer, or will ask them to log in if they are an existing customer or admin.*/
-		
-			
+		   /*The menuStart method asks the user if they are a new customer, 
+		    an existing customer or an admin. 
+		    It will then start the create customer process if they are a new customer, 
+		    or will ask them to log in if they are an existing customer or admin.*/
 		
 			
 			f = new JFrame("User Type");
@@ -83,7 +77,8 @@ public class Menu extends JFrame{
 
 			continueButton.addActionListener(new ActionListener(  ) {
 				public void actionPerformed(ActionEvent ae) {
-					String user = userType.getSelection().getActionCommand(  );
+					String user = userType.getSelection().getActionCommand();
+
 					
 					//if user selects NEW CUSTOMER--------------------------------------------------------------------------------------
 					if(user.equals("New Customer"))
@@ -164,7 +159,7 @@ public class Menu extends JFrame{
 									
 										JOptionPane.showMessageDialog(f, "CustomerID = " + CustomerID +"\n Password = " + password  ,"Customer created.",  JOptionPane.INFORMATION_MESSAGE);
 										menuStart();
-									f.dispose();
+									//f.dispose();
 							}
 						});	
 								}
@@ -244,7 +239,9 @@ public class Menu extends JFrame{
 					    	
 					    if(cont)
 					    {
-						f1.dispose();
+					    	if (f1 != null) {
+					    		f1.dispose();
+					    	}
 					    	loop = false;
 					    admin();					    
 					    }					    
@@ -319,7 +316,10 @@ public class Menu extends JFrame{
 					    	
 					    if(cont)
 					    {
-						f.dispose();
+					    	if (f != null) {
+					    		f.dispose();	
+					    	}
+						
 					    	loop = false;
 					    	customer(customer);				    
 					    }				    
