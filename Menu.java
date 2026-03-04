@@ -402,7 +402,7 @@ public class Menu extends JFrame{
 		content.add(flowLeft(navigateButton, true));
 		content.add(flowLeft(summaryButton, true));	
 		content.add(flowLeft(deleteCustomer, true));
-	//	content.add(wrapLeft(deleteAccount);
+		content.add(flowLeft(deleteAccount, true));
 		content.add(flowLeft(returnButton, false));
 		
 		bankChargesButton.addActionListener(new ActionListener() {
@@ -444,6 +444,13 @@ public class Menu extends JFrame{
 		deleteCustomer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				deleteCustomerMethod();
+			}
+		}); 
+		
+		
+		deleteAccount.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				deleteAccountMethod();
 			}
 		}); 
 		
@@ -623,6 +630,59 @@ public class Menu extends JFrame{
 			}
 	        
 	    }
+	}
+	
+	//----delete customer method---
+	private void deleteCustomerMethod() {
+	    Customer customer = getACustomer("Customer ID of Customer You Wish to Delete:");
+	    if (customer == null) {
+	        admin();
+	        return;
+	    }
+
+	    if (!customer.getAccounts().isEmpty()) {
+	        JOptionPane.showMessageDialog(f, "This customer has accounts. \n You must delete a customer's accounts before deleting a customer " ,"Oops!",  JOptionPane.INFORMATION_MESSAGE);
+	        admin();
+	        return;
+	    }
+
+	    customerList.remove(customer);
+	    JOptionPane.showMessageDialog(f, "Customer Deleted", "Success", JOptionPane.INFORMATION_MESSAGE);
+	    admin();
+	}
+	
+	
+	//---delete account method--
+	private void deleteAccountMethod() {
+
+	    Customer customer = getACustomer("Customer ID of Customer from which you wish to delete an account:");
+	    if (customer == null) {
+	        admin();
+	        return;
+	    }
+
+	    if (customer.getAccounts().isEmpty()) {
+	        JOptionPane.showMessageDialog(f, "This customer has no accounts to delete.", "Oops!", JOptionPane.INFORMATION_MESSAGE);
+	        admin();
+	        return;
+	    }
+
+	    CustomerAccount account = getCustomersAccount(customer, "Select an account to delete:");
+	    if (account == null) {
+	        admin();
+	        return;
+	    }
+
+	    if (account.getBalance() != 0.0) {
+	        JOptionPane.showMessageDialog(f,"Account cannot be deleted unless the balance is 0.\nCurrent balance: " + account.getBalance(),"Oops!",JOptionPane.INFORMATION_MESSAGE);
+	        admin();
+	        return;
+	    }
+
+	    customer.getAccounts().remove(account);
+	    JOptionPane.showMessageDialog(f, "Account deleted.", "Success", JOptionPane.INFORMATION_MESSAGE);
+	   
+	    admin();
 	}
 	
 	//----edit customer method----
