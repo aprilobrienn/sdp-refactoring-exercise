@@ -10,6 +10,8 @@ import java.util.Date;
 
 public class Menu extends JFrame{
 	
+	private static final String ADMIN_USERNAME = "admin";
+	private static final String ADMIN_PASS = "admin11";
 	private ArrayList<Customer> customerList = new ArrayList<Customer>();
     private int position = 0;
 	private String password;
@@ -240,6 +242,59 @@ public class Menu extends JFrame{
 			
 			private void openAdministratorUI() {
 				
+				
+				String adminUsername = checkAdminDetails(f,"Enter Administrator Username:", ADMIN_USERNAME, "Incorrect Username. Try again?");
+			    if (adminUsername == null) {
+			    	return;
+			    }
+			    
+			    String adminPassword = checkAdminDetails(f,"Enter Administrator Password:", ADMIN_PASS, "Incorrect Password. Try again?");
+			    if (adminPassword == null) {
+			    	return;
+			    }
+			    
+			    if (f1 != null) {
+		    		f1.dispose();
+		    	}
+			    admin();	
+			}
+			
+			private String checkAdminDetails(JFrame f, String message, String value ,String retryMsg) {
+				boolean loop = true;
+			    while (loop) {
+			    	
+			        String valueEntered = JOptionPane.showInputDialog(f, message);
+
+			        if (valueEntered == null) {
+			        	backToMenuStart(f);
+			            return null;
+			        }
+
+			        if (valueEntered.equals(value)) {
+			            return valueEntered;
+			        }
+
+			        int reply = JOptionPane.showConfirmDialog(f,retryMsg,null,JOptionPane.YES_NO_OPTION);
+
+			        if (reply == JOptionPane.NO_OPTION) {
+			        	backToMenuStart(f);
+			            return null;
+			        }
+			    }
+				return null;
+			}
+			
+			private void backToMenuStart(JFrame f) {
+			    if (f != null) {
+			        f.dispose();
+			    }
+			    if (f1 != null) {
+			        f1.dispose();
+			    }
+			    menuStart();
+			}
+				
+			    /*
 				boolean loop = true, loop2 = true;
 				boolean cont = false;
 			    while(loop)
@@ -298,7 +353,7 @@ public class Menu extends JFrame{
 			    admin();					    
 			    }	
 				
-			}
+			} */
 			
 			//------OPEN CUSTOOMER UI--------
 			
