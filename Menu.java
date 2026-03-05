@@ -1038,8 +1038,26 @@ public class Menu extends JFrame{
 	
 	public void customer(Customer e1)
 	{	
+		e = e1;
+		if(e.getAccounts().isEmpty())
+		{
+			JOptionPane.showMessageDialog(f, "This customer does not have any accounts yet. \n An admin must create an account for this customer \n for them to be able to use customer functionality. " ,"Oops!",  JOptionPane.INFORMATION_MESSAGE);
+			if (f != null) {
+				f.dispose();
+			}				
+			menuStart();
+			return;
+		}
+		selectAnAccount(e);
+	}
+	
+	//---select accout method----
+	private void selectAnAccount(Customer customer) {
+		if (f != null) {
+			f.dispose();
+		}
+		e = customer;
 		f = new JFrame("Customer Menu");
-		e1 = e;
 		f.setSize(400, 300);
 		f.setLocation(200, 200);
 		f.addWindowListener(new WindowAdapter() {
@@ -1047,14 +1065,6 @@ public class Menu extends JFrame{
 		});          
 		f.setVisible(true);
 		
-		if(e.getAccounts().size() == 0)
-		{
-			JOptionPane.showMessageDialog(f, "This customer does not have any accounts yet. \n An admin must create an account for this customer \n for them to be able to use customer functionality. " ,"Oops!",  JOptionPane.INFORMATION_MESSAGE);
-			f.dispose();				
-			menuStart();
-		}
-		else
-		{
 		JPanel buttonPanel = new JPanel();
 		JPanel boxPanel = new JPanel();
 		JPanel labelPanel = new JPanel();
@@ -1074,19 +1084,6 @@ public class Menu extends JFrame{
 	    }
 		
 	    
-	   
-	    for(int i = 0; i<e.getAccounts().size(); i++)
-	    {
-	    	if(e.getAccounts().get(i).getNumber() == box.getSelectedItem() )
-	    	{
-	    		acc = e.getAccounts().get(i);
-	    	}
-	    }
-	    
-	    
-	    
-	
-	    
 		boxPanel.add(box);
 		content = f.getContentPane();
 		content.setLayout(new GridLayout(3, 1));
@@ -1096,14 +1093,36 @@ public class Menu extends JFrame{
 		
 		returnButton.addActionListener(new ActionListener(  ) {
 			public void actionPerformed(ActionEvent ae) {
-			f.dispose();				
-			menuStart();				
+			returnButtonMethod(f);		
 			}		
 	     });
 		
 		continueButton.addActionListener(new ActionListener(  ) {
 			public void actionPerformed(ActionEvent ae) {
-				
+				if (box.getSelectedItem() == null) {
+					return;
+				}
+				CustomerAccount selected = findAccountByNumber(customer, box.getSelectedItem().toString());
+		        if (selected == null) {
+		            return;
+		        }
+		        openCustomerMenu(customer, selected);
+			}
+		});
+	}
+	
+	//---get selected account---
+	private CustomerAccount findAccountByNumber(Customer customer, String number) {
+    	for (int i =0; i < customer.getAccounts().size(); i++)
+    		if(customer.getAccounts().get(i).getNumber().equals(number)) {
+    			return customer.getAccounts().get(i);
+	    }
+	    return null;
+	}
+	
+	
+	//---open customer menu----
+	private void openCustomerMenu(Customer customer, CustomerAccount acc){
 		f.dispose();
 		
 		f = new JFrame("Customer Menu");
@@ -1114,35 +1133,102 @@ public class Menu extends JFrame{
 		});          
 		f.setVisible(true);
 		
-		JPanel statementPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JButton statementButton = new JButton("Display Bank Statement");
-		statementButton.setPreferredSize(new Dimension(250, 20));
-		
-		statementPanel.add(statementButton);
-		
-		JPanel lodgementPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JButton lodgementButton = new JButton("Lodge money into account");
-		lodgementPanel.add(lodgementButton);
-		lodgementButton.setPreferredSize(new Dimension(250, 20));
-		
-		JPanel withdrawalPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JButton withdrawButton = new JButton("Withdraw money from account");
-		withdrawalPanel.add(withdrawButton);
-		withdrawButton.setPreferredSize(new Dimension(250, 20));
-		
-		JPanel returnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		JButton returnButton = new JButton("Exit Customer Menu");
-		returnPanel.add(returnButton);
-
-		JLabel label1 = new JLabel("Please select an option");
-		
-		content = f.getContentPane();
+		JButton statementButton = createButton("Display Bank Statement");
+	    JButton lodgementButton = createButton("Lodge money into account");
+	    JButton withdrawButton = createButton("Withdraw money from account");
+	    JButton returnButton = new JButton("Exit Customer Menu");
+	    
+	    JLabel label1 = new JLabel("Please select an option");
+	    
+	    content = f.getContentPane();
 		content.setLayout(new GridLayout(5, 1));
 		content.add(label1);
-		content.add(statementPanel);
-		content.add(lodgementPanel);
-		content.add(withdrawalPanel);
-		content.add(returnPanel);
+		content.add(flowLeft(statementButton, true));
+		content.add(flowLeft(lodgementButton, true));
+		content.add(flowLeft(withdrawButton, true));
+		content.add(flowLeft(returnButton, false));
+		
+		statementButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				statementMethod(customer, acc);
+			}
+		}); 
+		
+		lodgementButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//lodgementMethod(customer, acc);
+			}
+		}); 
+		
+		withdrawButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//withdrawMethod(customer, acc);
+			}
+		}); 
+		
+		returnButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				returnButtonMethod(f);
+			}
+		}); 
+	}
+	
+	
+	private void statementMethod(Customer customer, CustomerAccount account) {
+		f.dispose();
+		f = new JFrame("Customer Menu");
+		f.setSize(400, 600);
+		f.setLocation(200, 200);
+		f.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent we) { System.exit(0); }
+		});          
+		f.setVisible(true);
+		
+		JLabel label1 = new JLabel("Summary of account transactions: ");
+		
+		JPanel returnPanel = new JPanel();
+		JButton returnButton = new JButton("Return");
+		returnPanel.add(returnButton);
+		
+		JPanel textPanel = new JPanel();
+		
+		textPanel.setLayout( new BorderLayout() );
+		JTextArea textArea = new JTextArea(40, 20);
+		textArea.setEditable(false);
+		textPanel.add(label1, BorderLayout.NORTH);
+		textPanel.add(textArea, BorderLayout.CENTER);
+		textPanel.add(returnButton, BorderLayout.SOUTH);
+		
+		JScrollPane scrollPane = new JScrollPane(textArea);
+		textPanel.add(scrollPane);
+		
+		if (!account.getTransactionList().isEmpty()) {
+			for (int i = 0; i < account.getTransactionList().size(); i ++)
+			{
+				textArea.append(account.getTransactionList().get(i).toString());
+			}
+		}
+		
+		textPanel.add(textArea);
+		content.removeAll();
+		
+		
+		Container content = f.getContentPane();
+		content.setLayout(new GridLayout(1, 1));
+	//	content.add(label1);
+		content.add(textPanel);
+		//content.add(returnPanel);
+		
+		returnButton.addActionListener(new ActionListener(  ) {
+			public void actionPerformed(ActionEvent ae) {
+				f.dispose();
+		        openCustomerMenu(customer, account);	
+			}		
+	     });		
+	}
+		
+		/*		
+
 		
 		statementButton.addActionListener(new ActionListener(  ) {
 			public void actionPerformed(ActionEvent ae) {
@@ -1390,7 +1476,7 @@ public class Menu extends JFrame{
 	     });
 	}
 	}
-	
+	*/
 	
 	//---isnumeric method---
 	public static boolean isNumeric(String str)  // a method that tests if a string is numeric
