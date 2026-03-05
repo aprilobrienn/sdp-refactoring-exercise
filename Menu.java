@@ -798,7 +798,8 @@ public class Menu extends JFrame{
 	    JButton returnButton = new JButton("Return");
 	    returnButton.addActionListener(new ActionListener(  ) {
 			public void actionPerformed(ActionEvent ae) {
-				returnButtonMethod(f);
+				f.dispose();
+				admin();
 			}
 	    });
 
@@ -1156,7 +1157,7 @@ public class Menu extends JFrame{
 		
 		lodgementButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//lodgementMethod(customer, acc);
+				lodgementMethod(customer, acc);
 			}
 		}); 
 		
@@ -1173,7 +1174,7 @@ public class Menu extends JFrame{
 		}); 
 	}
 	
-	
+	//----- statment method------
 	private void statementMethod(Customer customer, CustomerAccount account) {
 		f.dispose();
 		f = new JFrame("Customer Menu");
@@ -1202,7 +1203,7 @@ public class Menu extends JFrame{
 		JScrollPane scrollPane = new JScrollPane(textArea);
 		textPanel.add(scrollPane);
 		
-		if (!account.getTransactionList().isEmpty()) {
+		if (account.getTransactionList() != null) {
 			for (int i = 0; i < account.getTransactionList().size(); i ++)
 			{
 				textArea.append(account.getTransactionList().get(i).toString());
@@ -1226,63 +1227,84 @@ public class Menu extends JFrame{
 			}		
 	     });		
 	}
+	
+	
+	//----- lodgement method-----
+	
+	private void lodgementMethod(Customer customer, CustomerAccount account) {
+	    if (!checkPin(account)) {
+	        openCustomerMenu(customer, account);
+	        return;
+	    }
+
+	    double balance = 0;
+	    String balanceTest = JOptionPane.showInputDialog(f, "Enter amount you wish to lodge:");//the isNumeric method tests to see if the string entered was numeric. 
+		if(isNumeric(balanceTest))
+		{
+			balance = Double.parseDouble(balanceTest);
+		}
+		else
+		{
+			JOptionPane.showMessageDialog(f, "You must enter a numerical value!" ,"Oops!",  JOptionPane.INFORMATION_MESSAGE);
+		}
+
+	    String euro = "\u20ac";
+	    account.setBalance(account.getBalance() + balance);
+	    
+	    Date date = new Date();
+		String date2 = date.toString();
+		String type = "Lodgement";
+		double amount = balance;
+		
+		AccountTransaction transaction = new AccountTransaction(date2, type, amount);
+		account.getTransactionList().add(transaction);
+		
+		JOptionPane.showMessageDialog(f, balance + euro + " added do you account!" ,"Lodgement",  JOptionPane.INFORMATION_MESSAGE);
+		 JOptionPane.showMessageDialog(f, "New balance = " + account.getBalance() + euro ,"Lodgement",  JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	
+	//----method to check pin----
+	private boolean checkPin(CustomerAccount account) {
+		if(!(account instanceof CustomerCurrentAccount)) {
+			return true;
+		}
+		
+		CustomerCurrentAccount acc = (CustomerCurrentAccount) account;
+		int checkPin = acc.getAtm().getPin();
+		int count = 3;
+		
+		if (acc.getAtm().getValid()) {
+			JOptionPane.showMessageDialog(f, "Pin entered incorrectly 3 times. ATM card locked."  ,"Pin",  JOptionPane.INFORMATION_MESSAGE);
+	        return false;
+	    }
+
+		while(count > 0) {
+			String Pin = JOptionPane.showInputDialog(f, "Enter 4 digit PIN;");
+			if (Pin == null) {
+				return false;
+			}
+			int i = Integer.parseInt(Pin);
+			if(checkPin == i)
+				{
+					JOptionPane.showMessageDialog(f, "Pin entry successful" ,  "Pin", JOptionPane.INFORMATION_MESSAGE);
+					return true;
+				}
+				else
+				{
+					count --;
+					JOptionPane.showMessageDialog(f, "Incorrect pin. " + count + " attempts remaining."  ,"Pin",  JOptionPane.INFORMATION_MESSAGE);					
+				}
+			
+			}
+		JOptionPane.showMessageDialog(f, "Pin entered incorrectly 3 times. ATM card locked."  ,"Pin",  JOptionPane.INFORMATION_MESSAGE);
+		acc.getAtm().setValid(false);
+		return false;
+	}
 		
 		/*		
 
-		
-		statementButton.addActionListener(new ActionListener(  ) {
-			public void actionPerformed(ActionEvent ae) {
-				f.dispose();
-				f = new JFrame("Customer Menu");
-				f.setSize(400, 600);
-				f.setLocation(200, 200);
-				f.addWindowListener(new WindowAdapter() {
-					public void windowClosing(WindowEvent we) { System.exit(0); }
-				});          
-				f.setVisible(true);
-				
-				JLabel label1 = new JLabel("Summary of account transactions: ");
-				
-				JPanel returnPanel = new JPanel();
-				JButton returnButton = new JButton("Return");
-				returnPanel.add(returnButton);
-				
-				JPanel textPanel = new JPanel();
-				
-				textPanel.setLayout( new BorderLayout() );
-				JTextArea textArea = new JTextArea(40, 20);
-				textArea.setEditable(false);
-				textPanel.add(label1, BorderLayout.NORTH);
-				textPanel.add(textArea, BorderLayout.CENTER);
-				textPanel.add(returnButton, BorderLayout.SOUTH);
-				
-				JScrollPane scrollPane = new JScrollPane(textArea);
-				textPanel.add(scrollPane);
-				
-				for (int i = 0; i < acc.getTransactionList().size(); i ++)
-				{
-					textArea.append(acc.getTransactionList().get(i).toString());
-					
-				}
-				
-				textPanel.add(textArea);
-				content.removeAll();
-				
-				
-				Container content = f.getContentPane();
-				content.setLayout(new GridLayout(1, 1));
-			//	content.add(label1);
-				content.add(textPanel);
-				//content.add(returnPanel);
-				
-				returnButton.addActionListener(new ActionListener(  ) {
-					public void actionPerformed(ActionEvent ae) {
-						f.dispose();			
-					customer(e);				
-					}		
-			     });										
-			}	
-	     });
+
 		
 		lodgementButton.addActionListener(new ActionListener(  ) {
 			public void actionPerformed(ActionEvent ae) {
