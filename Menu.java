@@ -1261,7 +1261,7 @@ public class Menu extends JFrame{
 	
 	//----method to check pin----
 	private boolean checkPin(CustomerAccount account) {
-		if(!(account instanceof CustomerCurrentAccount)) {
+		if(!account.pinNeeded()) {
 			return true;
 		}
 		

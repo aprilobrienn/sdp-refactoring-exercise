@@ -33,4 +33,9 @@ public String applyBankCharge() {
     return "15" + "\u20ac" + " current account fee applied.";
 }
 
+//--- pin needed---
+public boolean pinNeeded() {
+    return true;
+}
+
 }

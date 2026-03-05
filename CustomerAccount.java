@@ -59,6 +59,11 @@ public abstract class CustomerAccount  {
 	//---apply bank charges---
 	public abstract String applyBankCharge();
 	
+	//---pin needed method---
+	public boolean pinNeeded() {
+	    return false;
+	}
+	
 	
 	
 }
