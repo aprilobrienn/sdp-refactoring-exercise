@@ -27,4 +27,10 @@ public void setAtm(ATMCard atm)
 	this.atm = atm;
 }
 
+//---apply bank charge---
+public String applyBankCharge() {
+    setBalance(getBalance() - 15);
+    return "15" + "\u20ac" + " current account fee applied.";
+}
+
 }

@@ -1,6 +1,6 @@
 import java.util.ArrayList; 
 
-public class CustomerAccount  {
+public abstract class CustomerAccount  {
    
 	String number;
 	double balance;
@@ -29,9 +29,6 @@ public class CustomerAccount  {
 		return this.number;
 	}
 	
-	
-
-	
 	public double getBalance()
 	{
 		return this.balance;
@@ -57,6 +54,10 @@ public class CustomerAccount  {
 	{
 		this.transactionList = transactionList;
 	}
+	
+	
+	//---apply bank charges---
+	public abstract String applyBankCharge();
 	
 	
 	

@@ -26,6 +26,12 @@ public void setInterestRate(double interestRate)
 	this.interestRate = interestRate;
 }
 
+//---apply bank charge--
+public String applyBankCharge() {
+    setBalance(getBalance() - 25);
+    return "25" + "\u20ac" + " deposit account fee applied.";
+}
+
 
 
 }
