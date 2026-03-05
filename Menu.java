@@ -1274,7 +1274,7 @@ public class Menu extends JFrame{
 		int checkPin = acc.getAtm().getPin();
 		int count = 3;
 		
-		if (acc.getAtm().getValid()) {
+		if (!acc.getAtm().getValid()) {
 			JOptionPane.showMessageDialog(f, "Pin entered incorrectly 3 times. ATM card locked."  ,"Pin",  JOptionPane.INFORMATION_MESSAGE);
 	        return false;
 	    }
@@ -1343,7 +1343,7 @@ public class Menu extends JFrame{
 		account.getTransactionList().add(transaction);
 		
 		JOptionPane.showMessageDialog(f, withdraw + euro + " withdrawn." ,"Withdraw",  JOptionPane.INFORMATION_MESSAGE);
-		JOptionPane.showMessageDialog(f, "New balance = " + acc.getBalance() + euro ,"Withdraw",  JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(f, "New balance = " + account.getBalance() + euro ,"Withdraw",  JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	

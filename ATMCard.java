@@ -11,6 +11,7 @@ public class ATMCard {
 	public ATMCard(int pin, boolean valid)
 	{
 		this.pin = pin;
+		this.valid = valid;
 	}
 	
 	public int getPin()
