@@ -1246,13 +1246,7 @@ public class Menu extends JFrame{
 	    String euro = "\u20ac";
 	    account.setBalance(account.getBalance() + balance);
 	    
-	    Date date = new Date();
-		String date2 = date.toString();
-		String type = "Lodgement";
-		double amount = balance;
-		
-		AccountTransaction transaction = new AccountTransaction(date2, type, amount);
-		account.getTransactionList().add(transaction);
+	    account.addTransaction("Lodgement", balance);
 		
 		JOptionPane.showMessageDialog(f, balance + euro + " added to your account!" ,"Lodgement",  JOptionPane.INFORMATION_MESSAGE);
 		 JOptionPane.showMessageDialog(f, "New balance = " + account.getBalance() + euro ,"Lodgement",  JOptionPane.INFORMATION_MESSAGE);
@@ -1321,7 +1315,7 @@ public class Menu extends JFrame{
 			JOptionPane.showMessageDialog(f, "500 is the maximum you can withdraw at a time." ,"Oops!",  JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
-		if(withdraw > account.getBalance()) {
+		if(!account.canWithdrawAmount(withdraw)) {
 			JOptionPane.showMessageDialog(f, "Insufficient funds." ,"Oops!",  JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
@@ -1329,13 +1323,7 @@ public class Menu extends JFrame{
 	    String euro = "\u20ac";
 	    account.setBalance(account.getBalance()-withdraw);
 	    
-	    Date date = new Date();
-		String date2 = date.toString();
-		String type = "Withdraw";
-		double amount = withdraw;
-		
-		AccountTransaction transaction = new AccountTransaction(date2, type, amount);
-		account.getTransactionList().add(transaction);
+	    account.addTransaction("Withdraw", withdraw);
 		
 		JOptionPane.showMessageDialog(f, withdraw + euro + " withdrawn." ,"Withdraw",  JOptionPane.INFORMATION_MESSAGE);
 		JOptionPane.showMessageDialog(f, "New balance = " + account.getBalance() + euro ,"Withdraw",  JOptionPane.INFORMATION_MESSAGE);

@@ -64,6 +64,19 @@ public abstract class CustomerAccount  {
 	    return false;
 	}
 	
+	//--- can withdraw amount method---
+	public boolean canWithdrawAmount(double amount) {
+	    return amount <= getBalance();
+	}
+	
+	//--- add transaction method---
+	public void addTransaction(String type, double amount) {
+	    String date = new java.util.Date().toString();
+	    if (getTransactionList() != null) {
+	        getTransactionList().add(new AccountTransaction(date, type, amount));
+	    }
+	}
+	
 	
 	
 }
