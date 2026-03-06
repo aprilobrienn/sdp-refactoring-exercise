@@ -77,7 +77,7 @@ public abstract class CustomerAccount  {
 	    }
 	}
 	
-	//--can apply interest---
+	//--can apply interest--
 	public boolean canApplyInterest() {
 	    return false;
 	}
