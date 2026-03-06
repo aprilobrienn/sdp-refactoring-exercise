@@ -2,12 +2,12 @@ import java.util.ArrayList;
 
 public class Customer {
 
-	String PPS ="";
-	String surname = "";
-	String firstName = "";
-	String DOB ="";
-	String customerID = "";
-	String password = "";
+	private String PPS ="";
+	private String surname = "";
+	private String firstName = "";
+	private String DOB ="";
+	private String customerID = "";
+	private String password = "";
 	
 	ArrayList<CustomerAccount> accounts = new ArrayList<CustomerAccount> ();
 

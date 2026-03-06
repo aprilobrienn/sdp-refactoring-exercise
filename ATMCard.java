@@ -1,7 +1,7 @@
 public class ATMCard {
  
-	int pin;
-	boolean valid;
+	private int pin;
+	private boolean valid;
 
 	public ATMCard()
 	{

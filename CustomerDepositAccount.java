@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class CustomerDepositAccount extends CustomerAccount
 {
-   double interestRate;
+   private double interestRate;
 
 public CustomerDepositAccount()
 {
@@ -30,6 +30,11 @@ public void setInterestRate(double interestRate)
 public String applyBankCharge() {
     setBalance(getBalance() - 25);
     return "25" + "\u20ac" + " deposit account fee applied.";
+}
+
+//---can apply interest---
+public boolean canApplyInterest() {
+    return true;
 }
 
 

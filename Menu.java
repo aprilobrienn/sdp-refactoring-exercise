@@ -2,11 +2,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import javax.swing.*;
-import java.text.ParseException;
-import javax.swing.text.MaskFormatter;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 public class Menu extends JFrame{
 	
@@ -14,7 +9,6 @@ public class Menu extends JFrame{
 	private static final String ADMIN_PASS = "admin11";
 	private ArrayList<Customer> customerList = new ArrayList<Customer>();
     private int position = 0;
-	private String password;
 	private Customer customer = null;
 	private CustomerAccount acc;
 	JFrame f, f1;
@@ -24,11 +18,6 @@ public class Menu extends JFrame{
 		JTextField customerIDTextField, passwordTextField;
 	Container content;
 		Customer e;
-
-
-	 JPanel panel2;
-		JButton add;
-		String 	PPS,firstName,surname,DOB,CustomerID;
 	
 	public static void main(String[] args)
 	{
@@ -140,7 +129,7 @@ public class Menu extends JFrame{
 					panel.add(dOBLabel);
 					panel.add(dOBTextField);
 						
-					panel2 = new JPanel();
+					JPanel panel2 = new JPanel();
 					
 					JButton add = new JButton("Add");
 					JButton cancel = new JButton("Cancel");
@@ -592,7 +581,7 @@ public class Menu extends JFrame{
 	        return;
 	    }
 
-	    if (!(account instanceof CustomerDepositAccount)) {
+	    if (account.canApplyInterest()) {
 	        JOptionPane.showMessageDialog(f, "To apply interest you must choose a deposit account.", "Oops!", JOptionPane.INFORMATION_MESSAGE);
 	        admin();
 	        return;
@@ -986,6 +975,7 @@ public class Menu extends JFrame{
 	    } else if (type.equals("Deposit Account")) {
 	        createDepositAccount(customer);
 	    }
+	    
 
 	    admin();
 	}

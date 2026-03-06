@@ -1,8 +1,8 @@
 public class AccountTransaction {
 
-	String date;
-	String type;
-	double amount;
+	private String date;
+	private String type;
+	private double amount;
 	
 	//Blank constructor
 	public AccountTransaction()

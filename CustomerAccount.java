@@ -2,9 +2,9 @@ import java.util.ArrayList;
 
 public abstract class CustomerAccount  {
    
-	String number;
-	double balance;
-	ArrayList<AccountTransaction> transactionList = new ArrayList<AccountTransaction>();
+	private String number;
+	private double balance;
+	private ArrayList<AccountTransaction> transactionList = new ArrayList<AccountTransaction>();
 
 	//Blank Constructor
 	public CustomerAccount()
@@ -75,6 +75,11 @@ public abstract class CustomerAccount  {
 	    if (getTransactionList() != null) {
 	        getTransactionList().add(new AccountTransaction(date, type, amount));
 	    }
+	}
+	
+	//--can apply interest---
+	public boolean canApplyInterest() {
+	    return false;
 	}
 	
 	
