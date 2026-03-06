@@ -7,6 +7,9 @@ public class Menu extends JFrame{
 	
 	private static final String ADMIN_USERNAME = "admin";
 	private static final String ADMIN_PASS = "admin11";
+	private static final int PIN_ATTEMPS = 3;
+	private static final int MAX_WITHDRAWL = 500;
+	private static final int PASSWORD_LENGTH = 7;
 	private ArrayList<Customer> customerList = new ArrayList<Customer>();
     private int position = 0;
 	private Customer customer = null;
@@ -211,7 +214,7 @@ public class Menu extends JFrame{
 					 return null;
 				 }
 				
-				 if(password.length() != 7)//Making sure password is 7 characters
+				 if(password.length() != PASSWORD_LENGTH)//Making sure password is 7 characters
 				    {
 				    	JOptionPane.showMessageDialog(null, null, "Password must be 7 charatcers long", JOptionPane.OK_OPTION);
 				    }
@@ -553,7 +556,6 @@ public class Menu extends JFrame{
 	        return;
 	    }
 	    
-	    //String euro = "\u20ac";
 	    String msg = customerAccount.applyBankCharge();
 	    JOptionPane.showMessageDialog(f, msg  ,"",  JOptionPane.INFORMATION_MESSAGE);
 
@@ -805,18 +807,12 @@ public class Menu extends JFrame{
 	private String summaryBuilder() {
 	    StringBuilder sb = new StringBuilder();
 
-	    for (int a = 0; a < customerList.size(); a++)//For each customer, for each account, it displays each transaction.
-		{
-			for (int b = 0; b < customerList.get(a).getAccounts().size(); b ++ )
-			{
-				acc = customerList.get(a).getAccounts().get(b);
-				for (int c = 0; c < customerList.get(a).getAccounts().get(b).getTransactionList().size(); c++)
-				{
-					sb.append(acc.getTransactionList().get(c).toString());
-					//Int total = acc.getTransactionList().get(c).getAmount(); //I was going to use this to keep a running total but I couldnt get it  working.
-					
-				}				
-			}				
+	    for (Customer customer : customerList) {
+			for (CustomerAccount acc : customer.getAccounts()) {
+				for (AccountTransaction transaction : acc.getTransactionList()) {
+					sb.append(transaction.toString());
+				}
+			}
 		}
 
 	    return sb.toString();
@@ -1189,9 +1185,9 @@ public class Menu extends JFrame{
 		textPanel.add(scrollPane);
 		
 		if (account.getTransactionList() != null) {
-			for (int i = 0; i < account.getTransactionList().size(); i ++)
+			for (AccountTransaction transaction : account.getTransactionList())
 			{
-				textArea.append(account.getTransactionList().get(i).toString());
+				textArea.append(transaction.toString());
 			}
 		}
 		
@@ -1201,9 +1197,7 @@ public class Menu extends JFrame{
 		
 		Container content = f.getContentPane();
 		content.setLayout(new GridLayout(1, 1));
-	//	content.add(label1);
 		content.add(textPanel);
-		//content.add(returnPanel);
 		
 		returnButton.addActionListener(new ActionListener(  ) {
 			public void actionPerformed(ActionEvent ae) {
@@ -1251,7 +1245,7 @@ public class Menu extends JFrame{
 		
 		CustomerCurrentAccount acc = (CustomerCurrentAccount) account;
 		int checkPin = acc.getAtm().getPin();
-		int count = 3;
+		int count = PIN_ATTEMPS;
 		
 		if (!acc.getAtm().getValid()) {
 			JOptionPane.showMessageDialog(f, "Pin entered incorrectly 3 times. ATM card locked."  ,"Pin",  JOptionPane.INFORMATION_MESSAGE);
@@ -1301,7 +1295,7 @@ public class Menu extends JFrame{
 			return;
 		}
 		
-		if(withdraw > 500) {
+		if(withdraw > MAX_WITHDRAWL) {
 			JOptionPane.showMessageDialog(f, "500 is the maximum you can withdraw at a time." ,"Oops!",  JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
