@@ -1,7 +1,10 @@
 import java.util.ArrayList;
 
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 public class CustomerActions {
 	private static final int PASSWORD_LENGTH = 7;
@@ -147,6 +150,33 @@ public class CustomerActions {
 	    JOptionPane.showMessageDialog(f, "CustomerID = " + customer.getCustomerID() +"\n Password = " + password  ,"Customer created.",  JOptionPane.INFORMATION_MESSAGE);
 
 	    return true;
+	}
+	
+	
+	//----get customer account method--
+	public CustomerAccount getCustomersAccount(Customer customer, String message, JFrame f) {
+		JComboBox<String> box = new JComboBox<>();
+	    for (CustomerAccount a : customer.getAccounts()) {
+	        box.addItem(a.getNumber());
+	    }
+
+	    JPanel panel = new JPanel();
+	    panel.add(new JLabel(message));
+	    panel.add(box);
+	 
+	    int result = JOptionPane.showConfirmDialog(f,panel,"Administrator Menu", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE
+	    );
+
+	    if (result != JOptionPane.OK_OPTION) return null;
+
+	    String selectedNumber = (String) box.getSelectedItem();
+	    for (CustomerAccount a : customer.getAccounts()) {
+	        if (a.getNumber().equals(selectedNumber)) {
+	            return a;
+	        }
+	    }
+	    return null;
+		
 	}
 	
 

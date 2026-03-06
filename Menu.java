@@ -5,6 +5,7 @@ import javax.swing.*;
 
 public class Menu extends JFrame{
 	private CustomerActions customerActions = new CustomerActions();
+	private AdminActions adminActions = new AdminActions();
 	private static final String ADMIN_USERNAME = "admin";
 	private static final String ADMIN_PASS = "admin11";
 	private static final int PIN_ATTEMPS = 3;
@@ -293,7 +294,8 @@ public class Menu extends JFrame{
 		
 		bankChargesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				bankChargesMethod();
+				adminActions.bankChargesMethod(f, customerList);
+				admin();
 			}
 		}); 
 		
@@ -305,13 +307,15 @@ public class Menu extends JFrame{
 		
 		interestButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				interestMethod();
+				adminActions.interestMethod(f, customerList);
+				admin();
 			}
 		}); 
 		
 		accountButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				accountMethod();
+				adminActions.accountMethod(f, customerList);
+				admin();
 			}
 		}); 
 		
@@ -376,141 +380,7 @@ public class Menu extends JFrame{
 	    return p;
 	}
 	
-	
-	/*
-	private Customer getACustomer(String message) {
-		if(customerList.isEmpty())
-		{
-			JOptionPane.showMessageDialog(f, "There are no customers yet!"  ,"Oops!",  JOptionPane.INFORMATION_MESSAGE);
-			return null;
-		}
-		while (true) {
-			String customerId = JOptionPane.showInputDialog(f, message);
-	        if (customerId == null) {
-	        	return null;
-	        }
-	        
-	        Customer customer = findCustomerById(customerId);
-	        if (customer != null) {
-	        	return customer;
-	        }
-	        
-	        int reply = JOptionPane.showConfirmDialog(f, "User not found. Try again?", null, JOptionPane.YES_NO_OPTION);
-	        
-	        if (reply == JOptionPane.NO_OPTION) {
-	        	return null;
-	        }
-		}
-	}*/
-	
-	
-	//----get customer account method--
-	private CustomerAccount getCustomersAccount(Customer customer, String message) {
-		JComboBox<String> box = new JComboBox<>();
-	    for (CustomerAccount a : customer.getAccounts()) {
-	        box.addItem(a.getNumber());
-	    }
 
-	    JPanel panel = new JPanel();
-	    panel.add(new JLabel(message));
-	    panel.add(box);
-	 
-	    int result = JOptionPane.showConfirmDialog(f,panel,"Administrator Menu", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE
-	    );
-
-	    if (result != JOptionPane.OK_OPTION) return null;
-
-	    String selectedNumber = (String) box.getSelectedItem();
-	    for (CustomerAccount a : customer.getAccounts()) {
-	        if (a.getNumber().equals(selectedNumber)) {
-	            return a;
-	        }
-	    }
-	    return null;
-		
-	}
-	
-	//-----bank charges method-------
-	private void bankChargesMethod() {
-		Customer customer = customerActions.getACustomer("Customer ID of Customer You Wish to Apply Charges to:", customerList, f);
-	    if (customer == null) {
-	    	admin();
-	        return;
-	    }
-	    
-	    if (customer.getAccounts().isEmpty()) {
-	        JOptionPane.showMessageDialog(f, "This customer has no accounts! \n The admin must add acounts to this customer.", "Oops!", JOptionPane.INFORMATION_MESSAGE);
-	        admin();
-	        return;
-	    }
-
-	    CustomerAccount customerAccount = getCustomersAccount(customer, "Select an account to apply charges to:");
-	    if (customerAccount == null) {
-	    	admin();
-	        return;
-	    }
-	    
-	    String msg = customerAccount.applyBankCharge();
-	    JOptionPane.showMessageDialog(f, msg  ,"",  JOptionPane.INFORMATION_MESSAGE);
-
-	    JOptionPane.showMessageDialog(f, "New balance = " + customerAccount.getBalance(), "Success!", JOptionPane.INFORMATION_MESSAGE);
-	    admin();
-	}
-	
-	//----interest method---
-	private void interestMethod() {
-	    Customer customer = customerActions.getACustomer("Customer ID of Customer You Wish to Apply Interest to:",customerList, f);
-	    if (customer == null) {
-	        admin();
-	        return;
-	    }
-
-	    if (customer.getAccounts().isEmpty()) {
-	        JOptionPane.showMessageDialog(f, "This customer has no accounts! \n The admin must add acounts to this customer.", "Oops!", JOptionPane.INFORMATION_MESSAGE);
-	        admin();
-	        return;
-	    }
-
-	    CustomerAccount account = getCustomersAccount(customer, "Select an account to apply interest to:");
-	    if (account == null) {
-	    	admin();
-	        return;
-	    }
-
-	    if (!account.canApplyInterest()) {
-	        JOptionPane.showMessageDialog(f, "To apply interest you must choose a deposit account.", "Oops!", JOptionPane.INFORMATION_MESSAGE);
-	        admin();
-	        return;
-	    }
-
-	    Double interest = enterInterest("Enter interest percentage you wish to apply: \n NOTE: Please enter a numerical value. (with no percentage sign) \n E.g: If you wish to apply 8% interest, enter '8'");
-	    if (interest == null) {
-	    	admin();
-	        return;
-	    }
-
-	    account.setBalance(account.getBalance() + (account.getBalance() * (interest / 100.0)));
-	    JOptionPane.showMessageDialog(f, interest + "% interest applied. New balance = " + account.getBalance(), "Success!", JOptionPane.INFORMATION_MESSAGE);
-
-	    admin();
-	}
-	
-	private Double enterInterest(String message) {
-	    while (true) {
-	    	String interestString = JOptionPane.showInputDialog(f, message);
-	        if (interestString == null) {
-	        	return null;
-	        }
-	        if (isNumeric(interestString)) {
-	        	Double interest = Double.parseDouble(interestString);
-				return interest;
-				
-	        } else {
-	        	JOptionPane.showMessageDialog(f, "You must enter a numerical value!" ,"Oops!",  JOptionPane.INFORMATION_MESSAGE);
-			}
-	        
-	    }
-	}
 	
 	//----delete customer method---
 	private void deleteCustomerMethod() {
@@ -547,7 +417,7 @@ public class Menu extends JFrame{
 	        return;
 	    }
 
-	    CustomerAccount account = getCustomersAccount(customer, "Select an account to delete:");
+	    CustomerAccount account = customerActions.getCustomersAccount(customer, "Select an account to delete:", f);
 	    if (account == null) {
 	        admin();
 	        return;
@@ -842,71 +712,6 @@ public class Menu extends JFrame{
 	    passwordTextField.setText(c.getPassword());
 	}
 
-	
-	
-	//---account method----
-	private void accountMethod() {
-		f.dispose();
-
-	    Customer customer = customerActions.getACustomer("Customer ID of Customer You Wish to Add an Account to:", customerList, f);
-	    if (customer == null) {
-	        admin();
-	        return;
-	    }
-
-	    String type = selectAccountType();
-	    if (type == null) {
-	        admin();
-	        return;
-	    }
-
-	    if (type.equals("Current Account")) {
-	        createCurrentAccount(customer);
-	    } else if (type.equals("Deposit Account")) {
-	        createDepositAccount(customer);
-	    }
-	    
-
-	    admin();
-	}
-	
-	//--select account type to create
-	private String selectAccountType() {
-		String[] choices = { "Current Account", "Deposit Account" };
-	    return (String) JOptionPane.showInputDialog(f,"Please choose account type",
-	            "Account Type",
-	            JOptionPane.QUESTION_MESSAGE,null, choices,choices[1]);
-	}
-	
-	//---create current account---
-	private void createCurrentAccount(Customer customer) {
-		boolean valid = true;
-    	double balance = 0;
-    	String number = String.valueOf("C" + (customerList.indexOf(customer)+1) * 10 + (customer.getAccounts().size()+1));//this simple algorithm generates the account number
-    	ArrayList<AccountTransaction> transactionList = new ArrayList<AccountTransaction>();
-    	int randomPIN = (int)(Math.random()*9000)+1000;
-           String pin = String.valueOf(randomPIN);
-    
-           ATMCard atm = new ATMCard(randomPIN, valid);
-    	
-    	CustomerCurrentAccount current = new CustomerCurrentAccount(atm, number, balance, transactionList);
-    	
-    	customer.getAccounts().add(current);
-    	JOptionPane.showMessageDialog(f, "Account number = " + number +"\n PIN = " + pin  ,"Account created.",  JOptionPane.INFORMATION_MESSAGE);
-    	
-	}
-
-	//---create deposit account---
-	private void createDepositAccount(Customer customer) {
-		double balance = 0, interest = 0;
-    	String number = String.valueOf("D" + (customerList.indexOf(customer)+1) * 10 + (customer.getAccounts().size()+1));//this simple algorithm generates the account number
-    	ArrayList<AccountTransaction> transactionList = new ArrayList<AccountTransaction>();
-        	
-    	CustomerDepositAccount deposit = new CustomerDepositAccount(interest, number, balance, transactionList);
-    	
-    	customer.getAccounts().add(deposit);
-    	JOptionPane.showMessageDialog(f, "Account number = " + number ,"Account created.",  JOptionPane.INFORMATION_MESSAGE);
-	}
 
 	
 	
