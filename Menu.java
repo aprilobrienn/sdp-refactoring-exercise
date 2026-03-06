@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 public class Menu extends JFrame{
-	
+	private CustomerActions customerActions = new CustomerActions();
 	private static final String ADMIN_USERNAME = "admin";
 	private static final String ADMIN_PASS = "admin11";
 	private static final int PIN_ATTEMPS = 3;
@@ -165,65 +165,11 @@ public class Menu extends JFrame{
 			
 			//method to create new customer
 			private void createNewCustomer() {
-				String PPS = pPSTextField.getText();
-			    String firstName = firstNameTextField.getText();
-			    String surname = surnameTextField.getText();
-			    String DOB = dOBTextField.getText();
-
-			    if (PPS.isEmpty()) {
-			    	JOptionPane.showMessageDialog(null, null, "Please enter PPSN", JOptionPane.OK_OPTION);
-			        return;
-			    }
-			    if (firstName.isEmpty()) {
-			    	JOptionPane.showMessageDialog(null, null, "Please enter first name", JOptionPane.OK_OPTION);
-			        return;
-			    }
-			    if (surname.isEmpty()) {
-			    	JOptionPane.showMessageDialog(null, null, "Please enter surname", JOptionPane.OK_OPTION);
-			        return;
-			    }
-			    if (DOB.isEmpty()) {
-			    	JOptionPane.showMessageDialog(null, null, "Please enter DOB", JOptionPane.OK_OPTION);
-			        return;
-			    }
-
-			    String password = setCustomerPassword();
-			    if (password == null) {
-			        return;
-			    }
-
-			    String customerID = "ID" + PPS;
-
-			    ArrayList<CustomerAccount> accounts = new ArrayList<CustomerAccount>();
-			    Customer customer = new Customer(PPS, surname, firstName, DOB, customerID, password, accounts);
-			    customerList.add(customer);
-
-			    JOptionPane.showMessageDialog(f, "CustomerID = " + customerID +"\n Password = " + password  ,"Customer created.",  JOptionPane.INFORMATION_MESSAGE);
-
-			    f1.dispose();
-			    menuStart();
-			}
-			
-			
-			//method to let customer set password
-			private String setCustomerPassword() {
-				while(true){
-				 String password = JOptionPane.showInputDialog(f, "Enter 7 character Password;");
-				 
-				 if (password == null) {
-					 return null;
-				 }
-				
-				 if(password.length() != PASSWORD_LENGTH)//Making sure password is 7 characters
-				    {
-				    	JOptionPane.showMessageDialog(null, null, "Password must be 7 charatcers long", JOptionPane.OK_OPTION);
-				    }
-				 else
-				 {
-					 return password;
-				 }
-				 
+				if (!customerActions.createNewCustomer(pPSTextField.getText(), firstNameTextField.getText(), surnameTextField.getText(), dOBTextField.getText(), f, customerList)) {
+					return;
 				}
+				f1.dispose();
+			    menuStart();
 			}
 			
 			
@@ -286,13 +232,13 @@ public class Menu extends JFrame{
 			
 			
 			private void openExistingCustomerUI() {
-				Customer customer = getExistingCustomer();
+				Customer customer = customerActions.getExistingCustomer(f, customerList);
 				
 				if (customer == null) {
 					return;
 				}
 				
-				boolean validPassword = checkCustomerPassword(customer);
+				boolean validPassword = customerActions.checkCustomerPassword(f, customer);
 			    if (!validPassword)  {
 			    	return;
 			    }
@@ -302,58 +248,6 @@ public class Menu extends JFrame{
 			    }
 			    
 			    customer(customer);
-			}
-			
-			private Customer getExistingCustomer() {
-			    while (true) {
-			        String customerId = JOptionPane.showInputDialog(f, "Enter Customer ID:");
-			        if (customerId == null) {
-			        	backToMenuStart(f);
-			            return null;
-			        }
-
-			        Customer customer = findCustomerById(customerId);
-			        if (customer != null) {
-			            return customer;
-			        }
-
-			        int reply = JOptionPane.showConfirmDialog(f,"User not found. Try again?",null,JOptionPane.YES_NO_OPTION);
-
-			        if (reply == JOptionPane.NO_OPTION) {
-			        	backToMenuStart(f);
-			            return null;
-			        }
-			    }
-			}
-			
-			private Customer findCustomerById(String customerID) {
-			    for (Customer aCustomer: customerList) {
-			        if (aCustomer.getCustomerID().equals(customerID)) {
-			            return aCustomer;
-			        }
-			    }
-			    return null;
-			}
-			
-			private boolean checkCustomerPassword(Customer customer) {
-			    while (true) {
-			        String customerPassword = JOptionPane.showInputDialog(f, "Enter Customer Password:");
-			        if (customerPassword == null) {
-			        	backToMenuStart(f);
-			            return false;
-			        }
-
-			        if (customer.getPassword().equals(customerPassword)) {
-			            return true;
-			        }
-
-			        int reply = JOptionPane.showConfirmDialog(f,"Incorrect password. Try again?",null,JOptionPane.YES_NO_OPTION);
-
-			        if (reply == JOptionPane.NO_OPTION) {
-			        	backToMenuStart(f);
-			            return false;
-			        }
-			    }
 			}
 				
 				
@@ -483,7 +377,7 @@ public class Menu extends JFrame{
 	}
 	
 	
-	//reusable get customers methid
+	/*
 	private Customer getACustomer(String message) {
 		if(customerList.isEmpty())
 		{
@@ -507,7 +401,7 @@ public class Menu extends JFrame{
 	        	return null;
 	        }
 		}
-	}
+	}*/
 	
 	
 	//----get customer account method--
@@ -538,7 +432,7 @@ public class Menu extends JFrame{
 	
 	//-----bank charges method-------
 	private void bankChargesMethod() {
-		Customer customer = getACustomer("Customer ID of Customer You Wish to Apply Charges to:");
+		Customer customer = customerActions.getACustomer("Customer ID of Customer You Wish to Apply Charges to:", customerList, f);
 	    if (customer == null) {
 	    	admin();
 	        return;
@@ -565,7 +459,7 @@ public class Menu extends JFrame{
 	
 	//----interest method---
 	private void interestMethod() {
-	    Customer customer = getACustomer("Customer ID of Customer You Wish to Apply Interest to:");
+	    Customer customer = customerActions.getACustomer("Customer ID of Customer You Wish to Apply Interest to:",customerList, f);
 	    if (customer == null) {
 	        admin();
 	        return;
@@ -620,7 +514,7 @@ public class Menu extends JFrame{
 	
 	//----delete customer method---
 	private void deleteCustomerMethod() {
-	    Customer customer = getACustomer("Customer ID of Customer You Wish to Delete:");
+	    Customer customer = customerActions.getACustomer("Customer ID of Customer You Wish to Delete:", customerList, f);
 	    if (customer == null) {
 	        admin();
 	        return;
@@ -641,7 +535,7 @@ public class Menu extends JFrame{
 	//---delete account method--
 	private void deleteAccountMethod() {
 
-	    Customer customer = getACustomer("Customer ID of Customer from which you wish to delete an account:");
+	    Customer customer = customerActions.getACustomer("Customer ID of Customer from which you wish to delete an account:", customerList, f);
 	    if (customer == null) {
 	        admin();
 	        return;
@@ -673,7 +567,7 @@ public class Menu extends JFrame{
 	
 	//----edit customer method----
 	private void editCustomerMethod() {
-	    Customer customer = getACustomer("Enter Customer ID:");
+	    Customer customer = customerActions.getACustomer("Enter Customer ID:", customerList, f);
 	    if (customer == null) {
 	        admin();
 	        return;
@@ -954,7 +848,7 @@ public class Menu extends JFrame{
 	private void accountMethod() {
 		f.dispose();
 
-	    Customer customer = getACustomer("Customer ID of Customer You Wish to Add an Account to:");
+	    Customer customer = customerActions.getACustomer("Customer ID of Customer You Wish to Add an Account to:", customerList, f);
 	    if (customer == null) {
 	        admin();
 	        return;
