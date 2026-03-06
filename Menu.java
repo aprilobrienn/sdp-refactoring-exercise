@@ -583,7 +583,7 @@ public class Menu extends JFrame{
 	        return;
 	    }
 
-	    if (account.canApplyInterest()) {
+	    if (!account.canApplyInterest()) {
 	        JOptionPane.showMessageDialog(f, "To apply interest you must choose a deposit account.", "Oops!", JOptionPane.INFORMATION_MESSAGE);
 	        admin();
 	        return;
@@ -1228,9 +1228,7 @@ public class Menu extends JFrame{
 		}
 
 	    String euro = "\u20ac";
-	    account.setBalance(account.getBalance() + balance);
-	    
-	    account.addTransaction("Lodgement", balance);
+	    account.lodge(balance);
 		
 		JOptionPane.showMessageDialog(f, balance + euro + " added to your account!" ,"Lodgement",  JOptionPane.INFORMATION_MESSAGE);
 		 JOptionPane.showMessageDialog(f, "New balance = " + account.getBalance() + euro ,"Lodgement",  JOptionPane.INFORMATION_MESSAGE);
@@ -1305,9 +1303,6 @@ public class Menu extends JFrame{
 		}
 
 	    String euro = "\u20ac";
-	    account.setBalance(account.getBalance()-withdraw);
-	    
-	    account.addTransaction("Withdraw", withdraw);
 		
 		JOptionPane.showMessageDialog(f, withdraw + euro + " withdrawn." ,"Withdraw",  JOptionPane.INFORMATION_MESSAGE);
 		JOptionPane.showMessageDialog(f, "New balance = " + account.getBalance() + euro ,"Withdraw",  JOptionPane.INFORMATION_MESSAGE);

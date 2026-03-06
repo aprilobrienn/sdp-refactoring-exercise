@@ -64,9 +64,14 @@ public abstract class CustomerAccount  {
 	    return false;
 	}
 	
-	//--- can withdraw amount method---
+	//--- withdraw amount method---
 	public boolean canWithdrawAmount(double amount) {
-	    return amount <= getBalance();
+	    if (amount <= getBalance()) {
+	    	setBalance(getBalance() - amount);
+	    	addTransaction("Withdraw", amount);
+	    	return true;
+	    }
+	    return false;
 	}
 	
 	//--- add transaction method---
@@ -81,6 +86,13 @@ public abstract class CustomerAccount  {
 	public boolean canApplyInterest() {
 	    return false;
 	}
+	
+	//---lodge amount method---
+	public void lodge(double amount) {
+        setBalance(getBalance() + amount);
+        addTransaction("Lodgement", amount);
+    }
+
 	
 	
 	
