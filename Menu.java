@@ -1060,9 +1060,8 @@ public class Menu extends JFrame{
 		buttonPanel.add(continueButton);
 		
 		JComboBox<String> box = new JComboBox<String>();
-	    for (int i =0; i < e.getAccounts().size(); i++)
-	    {
-	     box.addItem(e.getAccounts().get(i).getNumber());
+		for (CustomerAccount acc : e.getAccounts()) {
+	    	box.addItem(acc.getNumber());
 	    }
 		
 	    
@@ -1095,10 +1094,11 @@ public class Menu extends JFrame{
 	
 	//---get selected account---
 	private CustomerAccount findAccountByNumber(Customer customer, String number) {
-    	for (int i =0; i < customer.getAccounts().size(); i++)
-    		if(customer.getAccounts().get(i).getNumber().equals(number)) {
-    			return customer.getAccounts().get(i);
-	    }
+		for (CustomerAccount acc : customer.getAccounts()) {
+			if (acc.getNumber().equals(number)) {
+				return acc;
+			}
+		}
 	    return null;
 	}
 	
