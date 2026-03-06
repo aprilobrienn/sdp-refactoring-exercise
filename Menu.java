@@ -6,11 +6,12 @@ import javax.swing.*;
 public class Menu extends JFrame{
 	private CustomerActions customerActions = new CustomerActions();
 	private AdminActions adminActions = new AdminActions();
+	private AccountActions accountActions = new AccountActions();
 	private static final String ADMIN_USERNAME = "admin";
 	private static final String ADMIN_PASS = "admin11";
-	private static final int PIN_ATTEMPS = 3;
-	private static final int MAX_WITHDRAWL = 500;
-	private static final int PASSWORD_LENGTH = 7;
+	//private static final int PIN_ATTEMPS = 3;
+	//private static final int MAX_WITHDRAWL = 500;
+	//private static final int PASSWORD_LENGTH = 7;
 	private ArrayList<Customer> customerList = new ArrayList<Customer>();
     private int position = 0;
 	private Customer customer = null;
@@ -333,14 +334,16 @@ public class Menu extends JFrame{
 		
 		deleteCustomer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				deleteCustomerMethod();
+				customerActions.deleteCustomerMethod(customerList, f);
+				admin();
 			}
 		}); 
 		
 		
 		deleteAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				deleteAccountMethod();
+				accountActions.deleteAccountMethod(customerList, f);
+				admin();
 			}
 		}); 
 		
@@ -378,61 +381,6 @@ public class Menu extends JFrame{
 		}
 	    p.add(b);
 	    return p;
-	}
-	
-
-	
-	//----delete customer method---
-	private void deleteCustomerMethod() {
-	    Customer customer = customerActions.getACustomer("Customer ID of Customer You Wish to Delete:", customerList, f);
-	    if (customer == null) {
-	        admin();
-	        return;
-	    }
-
-	    if (!customer.getAccounts().isEmpty()) {
-	        JOptionPane.showMessageDialog(f, "This customer has accounts. \n You must delete a customer's accounts before deleting a customer " ,"Oops!",  JOptionPane.INFORMATION_MESSAGE);
-	        admin();
-	        return;
-	    }
-
-	    customerList.remove(customer);
-	    JOptionPane.showMessageDialog(f, "Customer Deleted", "Success", JOptionPane.INFORMATION_MESSAGE);
-	    admin();
-	}
-	
-	
-	//---delete account method--
-	private void deleteAccountMethod() {
-
-	    Customer customer = customerActions.getACustomer("Customer ID of Customer from which you wish to delete an account:", customerList, f);
-	    if (customer == null) {
-	        admin();
-	        return;
-	    }
-
-	    if (customer.getAccounts().isEmpty()) {
-	        JOptionPane.showMessageDialog(f, "This customer has no accounts to delete.", "Oops!", JOptionPane.INFORMATION_MESSAGE);
-	        admin();
-	        return;
-	    }
-
-	    CustomerAccount account = customerActions.getCustomersAccount(customer, "Select an account to delete:", f);
-	    if (account == null) {
-	        admin();
-	        return;
-	    }
-
-	    if (account.getBalance() != 0.0) {
-	        JOptionPane.showMessageDialog(f,"Account cannot be deleted unless the balance is 0.\nCurrent balance: " + account.getBalance(),"Oops!",JOptionPane.INFORMATION_MESSAGE);
-	        admin();
-	        return;
-	    }
-
-	    customer.getAccounts().remove(account);
-	    JOptionPane.showMessageDialog(f, "Account deleted.", "Success", JOptionPane.INFORMATION_MESSAGE);
-	   
-	    admin();
 	}
 	
 	//----edit customer method----
@@ -555,7 +503,7 @@ public class Menu extends JFrame{
 
 	    JTextArea textArea = new JTextArea(40, 20);
 	    textArea.setEditable(false);
-	    textArea.setText(summaryBuilder());
+	    textArea.setText(accountActions.summaryBuilder(customerList));
 
 
 	    JPanel panel = new JPanel(new BorderLayout());
@@ -566,22 +514,7 @@ public class Menu extends JFrame{
 	    f.setContentPane(panel);
 	    f.setVisible(true);
 	}
-	
-	//---summaryBuilder--
-	private String summaryBuilder() {
-	    StringBuilder sb = new StringBuilder();
 
-	    for (Customer customer : customerList) {
-			for (CustomerAccount acc : customer.getAccounts()) {
-				for (AccountTransaction transaction : acc.getTransactionList()) {
-					sb.append(transaction.toString());
-				}
-			}
-		}
-
-	    return sb.toString();
-	}
-	
 	
 	//--navigate method--
 	private void navigateMethod() {
@@ -717,10 +650,9 @@ public class Menu extends JFrame{
 	
 	//-----customer------
 	
-	public void customer(Customer e1)
-	{	
-		e = e1;
-		if(e.getAccounts().isEmpty())
+	public void customer(Customer customer)
+	{
+		if(customer.getAccounts().isEmpty())
 		{
 			JOptionPane.showMessageDialog(f, "This customer does not have any accounts yet. \n An admin must create an account for this customer \n for them to be able to use customer functionality. " ,"Oops!",  JOptionPane.INFORMATION_MESSAGE);
 			if (f != null) {
@@ -729,7 +661,7 @@ public class Menu extends JFrame{
 			menuStart();
 			return;
 		}
-		selectAnAccount(e);
+		selectAnAccount(customer);
 	}
 	
 	//---select accout method----
@@ -737,7 +669,6 @@ public class Menu extends JFrame{
 		if (f != null) {
 			f.dispose();
 		}
-		e = customer;
 		f = new JFrame("Customer Menu");
 		f.setSize(400, 300);
 		f.setLocation(200, 200);
@@ -782,25 +713,14 @@ public class Menu extends JFrame{
 				if (box.getSelectedItem() == null) {
 					return;
 				}
-				CustomerAccount selected = findAccountByNumber(customer, box.getSelectedItem().toString());
+				CustomerAccount selected = accountActions.findAccountByNumber(customer, box.getSelectedItem().toString());
 		        if (selected == null) {
 		            return;
 		        }
 		        openCustomerMenu(customer, selected);
 			}
 		});
-	}
-	
-	//---get selected account---
-	private CustomerAccount findAccountByNumber(Customer customer, String number) {
-		for (CustomerAccount acc : customer.getAccounts()) {
-			if (acc.getNumber().equals(number)) {
-				return acc;
-			}
-		}
-	    return null;
-	}
-	
+	}	
 	
 	//---open customer menu----
 	private void openCustomerMenu(Customer customer, CustomerAccount acc){
@@ -837,13 +757,15 @@ public class Menu extends JFrame{
 		
 		lodgementButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				lodgementMethod(customer, acc);
+				accountActions.lodgementMethod(customer, acc, f);
+				openCustomerMenu(customer, acc);
 			}
 		}); 
 		
 		withdrawButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				withdrawMethod(customer, acc);
+				accountActions.withdrawMethod(customer, acc, f);
+				openCustomerMenu(customer, acc);
 			}
 		}); 
 		
@@ -904,122 +826,6 @@ public class Menu extends JFrame{
 		        openCustomerMenu(customer, account);	
 			}		
 	     });		
-	}
-	
-	
-	//----- lodgement method-----
-	
-	private void lodgementMethod(Customer customer, CustomerAccount account) {
-	    if (!checkPin(account)) {
-	        openCustomerMenu(customer, account);
-	        return;
-	    }
-
-	    double balance = 0;
-	    String balanceTest = JOptionPane.showInputDialog(f, "Enter amount you wish to lodge:");//the isNumeric method tests to see if the string entered was numeric. 
-		if(isNumeric(balanceTest))
-		{
-			balance = Double.parseDouble(balanceTest);
-		}
-		else
-		{
-			JOptionPane.showMessageDialog(f, "You must enter a numerical value!" ,"Oops!",  JOptionPane.INFORMATION_MESSAGE);
-		}
-
-	    String euro = "\u20ac";
-	    account.lodge(balance);
-		
-		JOptionPane.showMessageDialog(f, balance + euro + " added to your account!" ,"Lodgement",  JOptionPane.INFORMATION_MESSAGE);
-		 JOptionPane.showMessageDialog(f, "New balance = " + account.getBalance() + euro ,"Lodgement",  JOptionPane.INFORMATION_MESSAGE);
-	}
-	
-	
-	//----method to check pin----
-	private boolean checkPin(CustomerAccount account) {
-		if(!account.pinNeeded()) {
-			return true;
-		}
-		
-		CustomerCurrentAccount acc = (CustomerCurrentAccount) account;
-		int checkPin = acc.getAtm().getPin();
-		int count = PIN_ATTEMPS;
-		
-		if (!acc.getAtm().getValid()) {
-			JOptionPane.showMessageDialog(f, "Pin entered incorrectly 3 times. ATM card locked."  ,"Pin",  JOptionPane.INFORMATION_MESSAGE);
-	        return false;
-	    }
-
-		while(count > 0) {
-			String Pin = JOptionPane.showInputDialog(f, "Enter 4 digit PIN;");
-			if (Pin == null) {
-				return false;
-			}
-			int i = Integer.parseInt(Pin);
-			if(checkPin == i)
-				{
-					JOptionPane.showMessageDialog(f, "Pin entry successful" ,  "Pin", JOptionPane.INFORMATION_MESSAGE);
-					return true;
-				}
-				else
-				{
-					count --;
-					JOptionPane.showMessageDialog(f, "Incorrect pin. " + count + " attempts remaining."  ,"Pin",  JOptionPane.INFORMATION_MESSAGE);					
-				}
-			
-			}
-		JOptionPane.showMessageDialog(f, "Pin entered incorrectly 3 times. ATM card locked."  ,"Pin",  JOptionPane.INFORMATION_MESSAGE);
-		acc.getAtm().setValid(false);
-		return false;
-	}
-	
-	
-	//----widthdraw method---
-	private void withdrawMethod(Customer customer, CustomerAccount account) {
-	    if (!checkPin(account)) {
-	        openCustomerMenu(customer, account);
-	        return;
-	    }
-
-	    double withdraw = 0;
-	    String balanceTest = JOptionPane.showInputDialog(f, "\"Enter amount you wish to withdraw (max 500):");//the isNumeric method tests to see if the string entered was numeric. 
-		if(isNumeric(balanceTest))
-		{
-			withdraw = Double.parseDouble(balanceTest);
-		}
-		else
-		{
-			JOptionPane.showMessageDialog(f, "You must enter a numerical value!" ,"Oops!",  JOptionPane.INFORMATION_MESSAGE);
-			return;
-		}
-		
-		if(withdraw > MAX_WITHDRAWL) {
-			JOptionPane.showMessageDialog(f, "500 is the maximum you can withdraw at a time." ,"Oops!",  JOptionPane.INFORMATION_MESSAGE);
-			return;
-		}
-		if(!account.canWithdrawAmount(withdraw)) {
-			JOptionPane.showMessageDialog(f, "Insufficient funds." ,"Oops!",  JOptionPane.INFORMATION_MESSAGE);
-			return;
-		}
-
-	    String euro = "\u20ac";
-		
-		JOptionPane.showMessageDialog(f, withdraw + euro + " withdrawn." ,"Withdraw",  JOptionPane.INFORMATION_MESSAGE);
-		JOptionPane.showMessageDialog(f, "New balance = " + account.getBalance() + euro ,"Withdraw",  JOptionPane.INFORMATION_MESSAGE);
-	}
-
-	
-	//---isnumeric method---
-	public static boolean isNumeric(String str)  // a method that tests if a string is numeric
-	{  
-	  try  
-	  {  
-	    double d = Double.parseDouble(str);  
-	  }  
-	  catch(NumberFormatException nfe)  
-	  {  
-	    return false;  
-	  }  
-	  return true;  
 	}
 }
 

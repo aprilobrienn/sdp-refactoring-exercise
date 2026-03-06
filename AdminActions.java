@@ -5,6 +5,7 @@ import javax.swing.JOptionPane;
 
 public class AdminActions {
 	private CustomerActions customerActions = new CustomerActions();
+	private AccountActions accountActions = new AccountActions();
 	
 	//---add account method----
 	public void accountMethod(JFrame f, ArrayList<Customer> customerList) {
@@ -144,7 +145,7 @@ public class AdminActions {
 	        if (interestString == null) {
 	        	return null;
 	        }
-	        if (Menu.isNumeric(interestString)) {
+	        if (accountActions.isNumeric(interestString)) {
 	        	Double interest = Double.parseDouble(interestString);
 				return interest;
 				

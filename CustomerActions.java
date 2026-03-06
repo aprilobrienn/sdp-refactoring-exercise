@@ -179,5 +179,26 @@ public class CustomerActions {
 		
 	}
 	
+	
+	
+	//----delete customer method---
+			public void deleteCustomerMethod(ArrayList<Customer> customerList, JFrame f) {
+			    Customer customer = getACustomer("Customer ID of Customer You Wish to Delete:", customerList, f);
+			    if (customer == null) {
+			        //admin();
+			        return;
+			    }
+
+			    if (!customer.getAccounts().isEmpty()) {
+			        JOptionPane.showMessageDialog(f, "This customer has accounts. \n You must delete a customer's accounts before deleting a customer " ,"Oops!",  JOptionPane.INFORMATION_MESSAGE);
+			        //admin();
+			        return;
+			    }
+
+			    customerList.remove(customer);
+			    JOptionPane.showMessageDialog(f, "Customer Deleted", "Success", JOptionPane.INFORMATION_MESSAGE);
+			   // admin();
+			} 
+	
 
 }
